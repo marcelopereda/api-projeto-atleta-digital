@@ -1,0 +1,31 @@
+CREATE DATABASE api_backend;
+
+USE api_backend;
+
+CREATE TABLE marcas (
+id_marca INT AUTO_INCREMENT PRIMARY KEY,
+nome_marca VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE produtos_musculacao (
+id_produto INT AUTO_INCREMENT PRIMARY KEY,
+produto VARCHAR(150) NOT NULL,
+id_marca INT NOT NULL,
+preco DECIMAL(10,2) NOT NULL,
+descricao TEXT,
+quantidade INT NOT NULL DEFAULT 0,
+imagem VARCHAR(255),
+
+FOREIGN KEY (id_marca) REFERENCES marcas(id_marca)
+ON UPDATE CASCADE
+ON DELETE RESTRICT
+);
+
+CREATE TABLE usuarios (
+id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+nome VARCHAR(100) NOT NULL,
+email VARCHAR(100) NOT NULL UNIQUE,
+senha VARCHAR(255) NOT NULL,
+tipo_usuario ENUM('admin', 'comum') DEFAULT 'comum',
+data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
+);
