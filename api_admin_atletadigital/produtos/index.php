@@ -3,16 +3,17 @@
 include "../verificar-autenticacao.php";
 
 // INDICA QUAL PÁGINA ESTOU NAVEGANDO
-$pagina = "clientes";
+$pagina = "produtos";
 
 if (isset($_GET["key"])) {
     $key = $_GET["key"];
-    require("../requests/clientes/get.php");
+    require("../requests/produtos/get.php");
+    $key = null;
     if (isset($response["data"]) && !empty($response["data"])) {
-        // Se houver dados, pega o primeiro e único cliente na posição [0]
-        $client = $response["data"][0];
+        // Se houver dados, pega o primeiro e único produto na posição [0]
+        $product = $response["data"][0];
     } else {
-        $client = null;
+        $product = null;
     }
 }
 
@@ -23,7 +24,7 @@ if (isset($_GET["key"])) {
 
 <head>
     <meta charset="UTF-8">
-    <title>Painel Cliente</title>
+    <title>Painel Produto</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -39,8 +40,8 @@ if (isset($_GET["key"])) {
 
     <div class="content">
         <div class="container mt-4">
-            <h3 class="mb-4"><i class="fas fa-users text-primary"></i> Painel de Gerenciamento - Cliente</h3>
-            <p class="text-muted">Gerencie os clientes e suas informações pessoais e de contato.</p>
+            <h3 class="mb-4"><i class="fas fa-users text-primary"></i> Painel de Gerenciamento - Produtos</h3>
+            <p class="text-muted">Gerencie os Produtos e suas informações</p>
             <hr>
 
         </div>
@@ -52,68 +53,63 @@ if (isset($_GET["key"])) {
             <div class="container py-5 shadow-lg bg-white rounded-5">
                 <!-- Cabeçalho da página -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="text-dark"><i class="fas fa-users me-2"></i>Clientes Cadastrados</h2>
+                    <h2 class="text-dark"><i class="fas fa-users me-2"></i>Produtos Cadastrados</h2>
                     <a href="<?php echo $_SESSION["url"]; ?>index.php" class="btn btn-outline-success shadow-sm">
                         <i class="fas fa-arrow-left me-2"></i>Voltar
                     </a>
                     <div>
                         <!-- Botões de ações -->
-                        <a href="../clientes/detalhe-cliente.php" class="btn btn-outline-primary shadow-sm"><i
-                                class="fas fa-plus"></i> Novo Cliente</a>
-                        <a href="../clientes/exportar.php" class="btn btn-outline-success shadow-sm"><i
+                        <a href="../produtos/detalhe-produto.php" class="btn btn-outline-primary shadow-sm"><i
+                                class="fas fa-plus"></i> Novo Produto</a>
+                        <a href="../produtos/exportar.php" class="btn btn-outline-success shadow-sm"><i
                                 class="fas fa-file-excel"></i> Exportar Excel</a>
-                        <a href="../clientes/exportar.pdf.php" class="btn btn-outline-danger shadow-sm"><i
+                        <a href="../produtos/exportar.pdf.php" class="btn btn-outline-danger shadow-sm"><i
                                 class="fas fa-file-pdf"></i> Exportar PDF</a>
-
-
-
                     </div>
                 </div>
 
-                <!-- Tabela de clientes -->
+                <!-- Tabela de produtos -->
                 <div class="table-responsive shadow-lg rounded-4">
                     <table id="myTable" class="table table-hover align-middle">
                         <thead class="table-dark text-uppercase">
                             <tr>
-                                <th>#</th>
-                                <th>Imagem</th>
-                                <th>Nome</th>
-                                <th>CPF</th>
-                                <th>Email</th>
-                                <th>Whatsapp</th>
-                                <th>Ações</th>
+                                <th scope="col">#</th>
+                                <th scope="col">Imagem</th>
+                                <th scope="col">Produto</th>
+                                <th scope="col" class="text-center">Marca</th>
+                                <th scope="col" class="text-center">Quantidade</th>
+                                <th scope="col" class="text-center">Preço</th>
+                                <th scope="col" class="text-center">Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="clientTableBody">
+                        <tbody id="productTableBody">
                             <?php
-                            $key = null;
-
-                            require("../requests/clientes/get.php");
+                            require("../requests/produtos/get.php");
                             if (!empty($response)) {
-                                foreach ($response["data"] as $key => $client) {
+                                foreach ($response["data"] as $key => $product) {
                                     echo '
                     <tr>
-                     <th scope="row">' . $client["id_cliente"] . '</th>
-                     <td><img src="/clientes/imagens/' . $client["imagem"] . '" alt="Imagem do Cliente" class="img-thumbnail" style="max-width: 100px;"></td>
-                     <td>' . $client["nome"] . '</td>
-                     <td>' . $client["cpf"] . '</td>
-                     <td>' . $client["email"] . '</td>
-                     <td>' . $client["whatsapp"] . '</td>
+                     <th scope="row">' . $product["id_produto"] . '</th>
+                     <td><img src="/produtos/imagens/' . $product["imagem"] . '" alt="Imagem do Produto" class="img-thumbnail" style="max-width: 100px;"></td>
+                     <td>' . $product["produto"] . '</td>
+                     <td>' . $product["marca"] . '</td>
+                     <td>' . $product["quantidade"] . '</td>
+                     <td>R$ ' . number_format($product["preco"], 2, ',', '.') . '</td>
                      <td>
-                         <a href="../clientes/detalhe-cliente.php?key=' . $client["id_cliente"] . '" class="btn btn-sm btn-outline-primary btn-sm me-2 mb-2"><i class="fas fa-edit"></i> Editar</a>
-                         <a href="../clientes/remover.php?key=' . $client["id_cliente"] . '" class="btn btn-sm btn-outline-danger btn-sm me-2"><i class="fas fa-trash"></i> Excluir</a>
+                         <a href="../produtos/detalhe-produto.php?key=' . $product["id_produto"] . '" class="btn btn-sm btn-outline-primary btn-sm me-2 mb-2"><i class="fas fa-edit"></i> Editar</a>
+                         <a href="../produtos/remover.php?key=' . $product["id_produto"] . '" class="btn btn-sm btn-outline-danger btn-sm me-2"><i class="fas fa-trash"></i> Excluir</a>
                      </td>
                     </tr>
                     ';
                                 }
                             } else {
 
-                                // Mensagem caso não haja clientes cadastrados
+                                // Mensagem caso não haja produtos cadastrados
                                 echo '
                 <tr>
                     <td colspan="7" class="text-center">
                          <div class="alert alert-info p-4 mb-0 shadow-sm">
-                         <i class="fas fa-info-circle fa-lg me-2 text-primary"></i>Nenhum cliente cadastrado até o momento.
+                         <i class="fas fa-info-circle fa-lg me-2 text-primary"></i>Nenhum produto cadastrado até o momento.
                          </div>
                      </td>
                </tr>';
